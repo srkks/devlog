@@ -223,8 +223,7 @@
                         <blockquote class="quote">
                             <p style="font-family: 'BMHANNAAir'; font-size:17px;"><span class="icon-holder"><i class="fas fa-quote-left"></i></span> 
                             개발자는 컴퓨터와의 대화만 중요하다고 생각할 수 있지만 결국엔 조직의 한 구성원으로 '사람'과의 소통이 매우 중요하다고 생각합니다.
-                            좋은 관계속에 있을 때 좋은 코드도 나올 수 있다고 생각합니다. 이런 마음가짐으로 열정을 가지고 팀 프로젝트를 한 끝에 교육원에서 1위팀을 하고 수료하게 되었습니다.
-                           이런 팀 안에서 늦게 출발했음에도 한몫을 할 수 있도록 부단히 노력해왔습니다.<br><br>
+                            좋은 관계속에 있을 때 좋은 코드도 나올 수 있다고 생각합니다. 상대방을 존중하고 배려하는 그런 개발자가 되고자 합니다.<br><br>
                        <center>-Page 2-</center> </p>
                             
                         </blockquote>
