@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.devlog.mapper.BoardMapper">
+
+
+	<sql id="criteria">
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+			<foreach item='type' collection="typeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">
+							title like '%'||#{keyword}||'%'
+						</when>
+						<when test="type == 'C'.toString()">
+							content like '%'||#{keyword}||'%'
+						</when>
+						<when test="type == 'W'.toString()">
+							writer like '%'||#{keyword}||'%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+	</sql>
+
+
+	<select id="getList" resultType="org.devlog.domain.BoardVO">
+	<![CDATA[
+		select * from kboard where bno > 0 
+		]]>
+	</select>
+
+	<insert id="insert">
+		insert into kboard (bno,title,content,writer,email, password)
+		values (seq_kboard.nextval, #{title}, #{content}, #{writer}, #{email}, #{password})
+	</insert>
+
+	<insert id="insertSelectKey">
+
+		<selectKey keyProperty="bno" order="BEFORE"
+			resultType="long">
+			select seq_kboard.nextval from dual
+		</selectKey>
+
+		insert into kboard (bno, title, content, writer, email, password)
+		values (#{bno}, #{title}, #{content}, #{writer}, #{email}, #{password})
+	</insert>
+
+	<select id="read" resultType="org.devlog.domain.BoardVO">
+		select * from kboard where bno = #{bno}
+	</select>
+
+
+	<delete id="delete">
+		delete kboard where bno = #{bno}
+	</delete>
+
+	<!-- 글번호와 일치하는 패스워드 값을 가져온다. -->
+	<select id="checkPw" resultType="String">
+		select password
+		from kboard
+		where bno = #{bno}
+	</select>
+	
+	<update id="update">
+		update kboard
+		set title  	   = #{title},
+			content	   = #{content},
+			writer     = #{writer},
+			updateDate = sysdate+9/24
+		where bno = #{bno}
+	</update>
+
+	<!-- <select id="getListWithPaging" resultType="org.zerock.domain.BoardVO"> 
+		<![CDATA[ select bno, title, content, writer, regdate, updatedate from ( 
+		select /*+INDEX_DESC(tbl_board pk_board) */ rownum rn, bno, title, content, 
+		writer, regdate, updatedate from tbl_board where rownum <= #{pageNum} * #{amount} 
+		) where rn > (#{pageNum} -1) * #{amount} ]]> </select> -->
+
+
+	<select id="getListWithPaging"
+		resultType="org.devlog.domain.BoardVO">
+  <![CDATA[
+  select 
+    bno, title, content, writer, regdate, updatedate, email, viewCnt
+  from 
+      (
+      select /*+INDEX_DESC(kboard pk_kboard) */
+        rownum rn, bno, title, content, writer, regdate, updatedate, email, viewCnt 
+      from 
+        kboard
+      where 
+  ]]>
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+			<foreach item='type' collection="typeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">
+							title like '%'||#{keyword}||'%'
+						</when>
+						<when test="type == 'C'.toString()">
+							content like '%'||#{keyword}||'%'
+						</when>
+						<when test="type == 'W'.toString()">
+							writer like '%'||#{keyword}||'%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+      
+  <![CDATA[    
+      rownum <= #{pageNum} * #{amount}
+      )
+  where rn > (#{pageNum} -1) * #{amount}   
+  ]]>
+	</select>
+
+
+
+
+	<select id="getTotalCount" resultType="int">
+		select count(*) from kboard where 
+		
+		<include refid="criteria"></include> 
+		
+		bno > 0
+		
+	</select>
+
+	<update id="increaseViewCnt">
+		UPDATE KBOARD
+		SET viewcnt = viewcnt+1
+		WHERE bno = #{bno}
+	</update>
+
+</mapper>
